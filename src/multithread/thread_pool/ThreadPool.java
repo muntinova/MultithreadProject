@@ -6,16 +6,16 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class ThreadPool {
-    private BlockingQueue taskQueue;
+    private BlockingQueue taskQueue=null;
     private List<ThreadPoolRunnable> runnableList = new ArrayList<>();
     private boolean isStopped=false;
 
     public ThreadPool(int noOfThreads,int maxNoOfTasks){
 
         taskQueue=new ArrayBlockingQueue(maxNoOfTasks);
+
         for(int i=0;i<noOfThreads;i++){
             ThreadPoolRunnable poolRunnable=new ThreadPoolRunnable(taskQueue);
-
             runnableList.add(poolRunnable);
         }
 
@@ -25,9 +25,9 @@ public class ThreadPool {
         }
     }
 
-    public synchronized void execute(Runnable task){
-        if(this.isStopped) throw new IllegalStateException("Thread pool is stopped");
-
+    public synchronized void execute(Runnable task) throws Exception{
+        if(this.isStopped) throw
+                new IllegalStateException("Thread pool is stopped");
         this.taskQueue.offer(task);
 
     }
@@ -43,7 +43,7 @@ public class ThreadPool {
         while(this.taskQueue.size()>0){
             try{
                 Thread.sleep(1);
-            } catch (InterruptedException e){
+            } catch (Exception e){
                 e.printStackTrace();
             }
 
